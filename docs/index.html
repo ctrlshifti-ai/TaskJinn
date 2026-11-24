@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TaskJinn · Desktop time tracker with a task board</title>
+  <meta name="description" content="TaskJinn is a free, open-source desktop time tracker with a task board, rich-text notes, timesheets and invoices. For macOS, Windows and Linux.">
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <img src="icon.png" alt="TaskJinn icon" class="hero-icon">
+    <h1><strong>TaskJinn</strong></h1>
+    <p class="tagline">The ultimate task management tool for freelancers.</p>
+    <p class="subline">Boards, time tracking, timesheets and invoices. For macOS, Windows and Linux.</p>
+    <div class="buttons">
+      <a class="button primary" href="https://github.com/ctrlshifti-ai/TaskJinn/releases">Download</a>
+      <a class="button" href="https://github.com/ctrlshifti-ai/TaskJinn">View on GitHub</a>
+    </div>
+    <p class="small">Free and open source · GPL-3.0</p>
+  </header>
+
+  <main>
+    <section class="slideshow" aria-label="Screenshots">
+      <div class="slides" id="slides"></div>
+      <div class="dots" id="dots"></div>
+    </section>
+
+    <section class="demo">
+      <h2>Try it</h2>
+      <p class="muted">Drag a card to another column, or press ▶ to start its timer.</p>
+      <div class="board" id="board"></div>
+    </section>
+
+    <section>
+      <h2>Features</h2>
+      <div class="features">
+        <div class="feature"><span>🗂️</span><h3>Organizations → projects → tasks</h3><p>Each project numbers its tasks (WEB-1, WEB-2…) and has a board with To Do, In Progress, In Review and Done.</p></div>
+        <div class="feature"><span>⏱️</span><h3>Start, pause, stop</h3><p>Every session is saved. Run several timers at once, and see the running time in the menu bar.</p></div>
+        <div class="feature"><span>📈</span><h3>Status history</h3><p>See when a task was started and finished, and how long it spent in each status.</p></div>
+        <div class="feature"><span>📝</span><h3>Rich text</h3><p>Descriptions and comments with headings, lists, checklists, code and pasted images.</p></div>
+        <div class="feature"><span>🧾</span><h3>Timesheets and invoices</h3><p>Generate Excel timesheets and invoices for weekly, bi-weekly or monthly periods, with your signature.</p></div>
+        <div class="feature"><span>🔒</span><h3>Your data stays local</h3><p>Each organization is a folder with a SQLite database you choose. No account, no cloud.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Get started</h2>
+      <ol class="steps">
+        <li>Download the installer for your system from <a href="https://github.com/ctrlshifti-ai/TaskJinn/releases">Releases</a>.</li>
+        <li>Create an organization and choose a folder to store it.</li>
+        <li>Add a project and tasks, then press ▶ to track time.</li>
+      </ol>
+      <p>Prefer to build it yourself? Install <a href="https://rustup.rs">Rust</a>, then:</p>
+      <pre><code>git clone https://github.com/ctrlshifti-ai/TaskJinn.git
+cd TaskJinn
+./scripts/build-mac.sh      # or build-linux.sh, or build-windows.ps1</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <p>TaskJinn · GPL-3.0 · <a href="https://github.com/ctrlshifti-ai/TaskJinn">github.com/ctrlshifti-ai/TaskJinn</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
