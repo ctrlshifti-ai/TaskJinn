@@ -120,9 +120,34 @@ pub async fn pick_folder(app: AppHandle, title: String) -> Option<String> {
         .map(|path| path.to_string_lossy().into_owned())
 }
 
-/// Opens a folder in Finder / Explorer / the Linux file manager.
+/// Shows the system file picker for one file with one of `extensions` (e.g. ["png", "jpg"]).
 #[tauri::command]
-pub fn reveal_folder(path: String) -> Result<(), String> {
+pub async fn pick_file(app: AppHandle, title: String, extensions: Vec<String>) -> Option<String> {
+    let extensions: Vec<&str> = extensions.iter().map(|e| e.as_str()).collect();
+    app.dialog()
+        .file()
+        .set_title(title)
+        .add_filter("Files", &extensions)
+        .blocking_pick_file()
+        .and_then(|file| file.into_path().ok())
+        .map(|path| path.to_string_lossy().into_owned())
+}
+
+#[tauri::command]
+pub fn copy_file(from: String, to: String) -> Result<(), String> {
+    fs::copy(from, to).map(|_| ()).map_err(|e| e.to_string())
+}
+
+/// Reads a file as base64 (used to preview the signature image).
+#[tauri::command]
+pub fn read_base64(path: String) -> Result<String, String> {
+    let bytes = fs::read(path).map_err(|e| e.to_string())?;
+    Ok(base64::engine::general_purpose::STANDARD.encode(bytes))
+}
+
+/// Opens a file or folder with its usual app (Finder / Explorer / Excel...).
+#[tauri::command]
+pub fn open_path(path: String) -> Result<(), String> {
     let program = if cfg!(target_os = "macos") {
         "open"
     } else if cfg!(target_os = "windows") {

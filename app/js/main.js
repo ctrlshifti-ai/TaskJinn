@@ -6,9 +6,11 @@ import * as u from './util.js';
 import { Board } from './board.js';
 import { TaskPage } from './taskpage.js';
 import { DropMenu, Modal, StorageNotice } from './components.js';
+import { GenerateDialog, SettingsDialog } from './billing-dialogs.js';
+import { loadSettings, missingDetails } from './billing.js';
 
 const App = {
-  components: { Board, TaskPage, DropMenu, Modal, StorageNotice },
+  components: { Board, TaskPage, DropMenu, Modal, StorageNotice, GenerateDialog, SettingsDialog },
   data: () => ({
     state: store.state,
     orgId: null,
@@ -16,6 +18,10 @@ const App = {
     taskId: null,
     editor: null,    // add/rename dialog: { kind, targetId, orgId, projectId, name, key }
     question: null,  // yes/no dialog: { title, message, button, answer(bool) }
+    notice: null,    // information dialog: { title, message, path }
+    settingsOrg: null,   // organization whose timesheet & invoice settings are open
+    generator: null,     // generate dialog: { org, kind, settings }
+    missing: null,       // settings still needed: { org, kind, items }
   }),
   template: `
     <div class="layout" v-if="state.loaded">
@@ -112,6 +118,29 @@ const App = {
       </div>
     </Modal>
 
+    <!-- Timesheets and invoices -->
+    <SettingsDialog v-if="settingsOrg" :org="settingsOrg" @close="settingsOrg = null" />
+    <GenerateDialog v-if="generator" :org="generator.org" :kind="generator.kind" :settings="generator.settings"
+                    @close="generator = null" @done="generated" />
+    <Modal v-if="missing" title="Finish the settings first" @close="missing = null">
+      <p>To generate {{ missing.kind === 'invoice' ? 'an invoice' : 'a timesheet' }} for “{{ missing.org.name }}”,
+         fill in these details in its settings:</p>
+      <ul class="missing-list"><li v-for="item in missing.items" :key="item">{{ item }}</li></ul>
+      <div class="modal-buttons">
+        <button @click="missing = null">Cancel</button>
+        <button class="primary" @click="settingsOrg = missing.org; missing = null">Open Settings</button>
+      </div>
+    </Modal>
+
+    <!-- Information -->
+    <Modal v-if="notice" :title="notice.title" @close="notice = null">
+      <p>{{ notice.message }}</p>
+      <div class="modal-buttons">
+        <button v-if="notice.path" @click="api.openPath(notice.folder)">Show in Folder</button>
+        <button class="primary" @click="notice = null">OK</button>
+      </div>
+    </Modal>
+
     <!-- Errors -->
     <Modal v-if="state.error" title="Something went wrong" @close="state.error = null">
       <p>{{ state.error }}</p>
@@ -120,6 +149,7 @@ const App = {
 
   computed: {
     u: () => u,
+    api: () => api,
     org() { return store.findOrg(this.orgId); },
     project() { return this.org && store.findProject(this.orgId, this.projectId); },
     task() { return this.project && store.findTask(this.orgId, this.projectId, this.taskId); },
@@ -190,9 +220,35 @@ const App = {
         { label: 'Rename…', action: () => this.openEditor('org', org) },
         { label: folderLabel, action: () => this.pickFolder(org) },
       ];
-      if (org.storage === 'ready') items.push({ label: 'Show Folder', action: () => api.revealFolder(org.folderPath) });
+      if (org.storage === 'ready') {
+        items.push({ label: 'Show Folder', action: () => api.openPath(org.folderPath) });
+        items.push({ label: 'Timesheet & Invoice Settings…', action: () => { this.settingsOrg = org; } });
+      }
       items.push({ label: 'Remove from App…', danger: true, action: () => this.askRemoveOrg(org) });
-      return items;
+      return [
+        { label: 'Generate Timesheet', action: () => this.startGenerating(org, 'timesheet') },
+        { label: 'Generate Invoice', action: () => this.startGenerating(org, 'invoice') },
+        { label: 'Manage', children: items },
+      ];
+    },
+
+    // ----- Timesheets and invoices -----
+    /** Opens the generate dialog, or lists the settings still needed. */
+    async startGenerating(org, kind) {
+      if (org.storage !== 'ready') {
+        this.state.error = `Choose a storage folder for “${org.name}” first.`;
+        return;
+      }
+      const settings = await loadSettings(org);
+      const items = await missingDetails(org, settings);
+      if (items.length) this.missing = { org, kind, items };
+      else this.generator = { org, kind, settings };
+    },
+    generated(path) {
+      const kind = this.generator.kind;
+      this.generator = null;
+      const folder = path.replace(/[\\/][^\\/]+$/, '');
+      this.notice = { title: kind === 'invoice' ? 'Invoice created' : 'Timesheet created', message: path, path, folder };
     },
     projectMenu(project) {
       return [

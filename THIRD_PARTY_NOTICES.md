@@ -9,4 +9,5 @@ These are included in the app or used to build it. Each keeps its own license.
 | [Tauri](https://tauri.app) 2 and its dialog plugin | Rust dependencies | MIT or Apache-2.0 |
 | [rusqlite](https://github.com/rusqlite/rusqlite) | Rust dependency | MIT |
 | [SQLite](https://sqlite.org) | Built into the app through rusqlite | Public domain |
+| [rust_xlsxwriter](https://github.com/jmcnamara/rust_xlsxwriter) | Rust dependency (timesheet and invoice spreadsheets) | MIT or Apache-2.0 |
 | base64, percent-encoding, serde, serde_json | Rust dependencies | MIT or Apache-2.0 |

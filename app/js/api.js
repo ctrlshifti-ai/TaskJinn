@@ -19,7 +19,13 @@ export const api = {
   writeText: (path, text) => invoke('write_text', { path, text }),
   appDataDir: () => invoke('app_data_dir'),
   pickFolder: (title) => invoke('pick_folder', { title }),
-  revealFolder: (path) => invoke('reveal_folder', { path }),
+  pickFile: (title, extensions) => invoke('pick_file', { title, extensions }),
+  copyFile: (from, to) => invoke('copy_file', { from, to }),
+  readBase64: (path) => invoke('read_base64', { path }),
+  openPath: (path) => invoke('open_path', { path }),
+
+  // Spreadsheets (layout described in reports.js)
+  writeXlsx: (path, sheet) => invoke('write_xlsx', { path, sheet }),
 
   // Tray and windows
   setTrayState: (sessionStartedMs, runningCount, items) =>

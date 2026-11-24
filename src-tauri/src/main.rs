@@ -9,6 +9,7 @@
 
 mod database;
 mod files;
+mod spreadsheet;
 mod tray;
 
 use tauri::{Manager, WindowEvent};
@@ -30,7 +31,11 @@ fn main() {
             files::write_text,
             files::app_data_dir,
             files::pick_folder,
-            files::reveal_folder,
+            files::pick_file,
+            files::copy_file,
+            files::read_base64,
+            files::open_path,
+            spreadsheet::write_xlsx,
             tray::set_tray_state,
             tray::resize_popup,
             tray::show_main,

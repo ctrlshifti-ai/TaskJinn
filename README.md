@@ -42,6 +42,7 @@ and keep every organization's data in a local folder you choose.
 - **Rich text** descriptions and comments: headings, bold and italic, lists, checklists, quotes, code, links and pasted images.
 - **Task details:** type (Task / Bug / Story), priority, labels, due date, estimate (with % used), and subtasks with their own To Do / In Progress / Done status.
 - **Menu bar / tray timer.** Click the tray icon for the tasks in progress, with pause, resume and stop. On macOS the running time shows next to the icon.
+- **Timesheets and invoices.** Generate a timesheet or an invoice for an organization as an Excel (`.xlsx`) file, for a weekly, bi-weekly or monthly pay period. Hours come from your tracked time; the invoice adds your rate, tax and signature.
 - **Local-first storage.** Each organization is a folder with a SQLite database and its images. Keep it in Dropbox or iCloud, back it up, or open it on another computer.
 
 ## How it works
@@ -238,6 +239,9 @@ TaskJinn/
 │   │   ├── board.js        Project board with drag and drop
 │   │   ├── taskpage.js     Task page: description, subtasks, comments, history
 │   │   ├── richtext.js     Rich text editor (Quill)
+│   │   ├── billing.js      Timesheet & invoice settings, pay periods, hours per day
+│   │   ├── reports.js      Timesheet and invoice spreadsheet layouts
+│   │   ├── billing-dialogs.js  Settings and Generate dialogs
 │   │   ├── popup.js        Tray popup
 │   │   ├── api.js          Calls into the native part
 │   │   └── util.js         Shared helpers
@@ -246,6 +250,7 @@ TaskJinn/
 │   ├── src/database.rs     SQLite queries for the app
 │   ├── src/files.rs        Files, folders, folder picker, image serving
 │   ├── src/tray.rs         Tray icon, menu and popup window
+│   ├── src/spreadsheet.rs  Writes .xlsx files described by reports.js
 │   ├── tauri.conf.json     App name, windows and installer settings
 │   └── icons/              App and tray icons
 └── scripts/                Build and run scripts
@@ -258,7 +263,11 @@ You choose a folder for each organization. Its data lives only there:
 ```
 My Organization/
 ├── taskjinn.sqlite     projects, tasks, subtasks, time sessions, status history, comments
-└── attachments/        images used in descriptions and comments
+├── attachments/        images used in descriptions and comments
+├── settings.json       timesheet and invoice details (you, the client, rate, pay period)
+├── signature.png       your signature, shown on timesheets and invoices
+├── Timesheets/         generated timesheets (.xlsx)
+└── Invoices/           generated invoices (.xlsx)
 ```
 
 - **No account and no cloud.** Nothing leaves your computer unless you put the folder in a synced location.

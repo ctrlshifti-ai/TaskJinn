@@ -60,16 +60,28 @@ export const Modal = {
     </div>`,
 };
 
-/** "⋯" button that opens a small menu. Items: [{ label, action, danger }] */
+/**
+ * "⋯" button that opens a small menu.
+ * Items: [{ label, action, danger }]. An item with `children` (a list of items) opens a submenu.
+ */
 export const DropMenu = {
   props: ['items'],
-  data: () => ({ open: false }),
+  data: () => ({ open: false, openSubmenu: null, position: {} }),
   template: `
     <span class="dropmenu" @click.stop>
-      <button class="icon-button" title="More" @click="open = !open">⋯</button>
-      <div v-if="open" class="dropmenu-list">
-        <button v-for="item in items" :key="item.label" :class="{ danger: item.danger }"
-                @click="open = false; item.action()">{{ item.label }}</button>
+      <button class="icon-button" title="More" @click="toggle">⋯</button>
+      <div v-if="open" class="dropmenu-list main" :style="position">
+        <template v-for="item in items" :key="item.label">
+          <div v-if="item.children" class="dropmenu-submenu"
+               @mouseenter="openSubmenu = item.label" @mouseleave="openSubmenu = null">
+            <button @click="openSubmenu = item.label">{{ item.label }} <span class="chevron">›</span></button>
+            <div v-if="openSubmenu === item.label" class="dropmenu-list">
+              <button v-for="child in item.children" :key="child.label" :class="{ danger: child.danger }"
+                      @click="choose(child)">{{ child.label }}</button>
+            </div>
+          </div>
+          <button v-else :class="{ danger: item.danger }" @click="choose(item)">{{ item.label }}</button>
+        </template>
       </div>
     </span>`,
   mounted() {
@@ -78,6 +90,20 @@ export const DropMenu = {
   },
   unmounted() {
     document.removeEventListener('click', this.close);
+  },
+  methods: {
+    toggle(event) {
+      // The menu is placed relative to the window, so scrolling columns can't cut it off.
+      const button = event.currentTarget.getBoundingClientRect();
+      this.position = { top: `${button.bottom + 2}px`, left: `${button.right - 170}px` };
+      this.open = !this.open;
+      this.openSubmenu = null;
+    },
+    choose(item) {
+      this.open = false;
+      this.openSubmenu = null;
+      item.action();
+    },
   },
 };
 
