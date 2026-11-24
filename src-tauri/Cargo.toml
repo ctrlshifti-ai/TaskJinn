@@ -1,0 +1,22 @@
+[package]
+name = "taskjinn"
+version = "2.0.0"
+description = "Track time on tasks, organised by organization and project"
+license = "GPL-3.0-or-later"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png"] }
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+base64 = "0.22"
+percent-encoding = "2"
+
+[profile.release]
+strip = true
+lto = true

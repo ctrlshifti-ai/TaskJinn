@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "TaskJinn",
+  "version": "2.0.0",
+  "identifier": "org.taskjinn.desktop",
+  "build": {
+    "frontendDist": "../app"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "TaskJinn",
+        "url": "index.html",
+        "width": 1200,
+        "height": 760,
+        "minWidth": 960,
+        "minHeight": 600,
+        "dragDropEnabled": false
+      },
+      {
+        "label": "popup",
+        "title": "TaskJinn",
+        "url": "popup.html",
+        "width": 340,
+        "height": 200,
+        "visible": false,
+        "decorations": false,
+        "resizable": false,
+        "alwaysOnTop": true,
+        "skipTaskbar": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "shortDescription": "Time tracking for tasks",
+    "longDescription": "Track time on tasks organised by organization and project, with a task board, rich text descriptions and comments, subtasks and a menu bar timer.",
+    "copyright": "Copyright (C) 2026 TaskJinn contributors. Licensed under GPL-3.0-or-later.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}
